@@ -22,7 +22,7 @@ export default async function Page({
 	// Request the OpenAI API for the response based on the prompt
 	const response = await openai.createChatCompletion({
 		model: 'gpt-3.5-turbo',
-		stream: true,
+		stream: false,
 		messages: [
 			{
 				role: 'system',
