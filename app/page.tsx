@@ -4,23 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SampleQuestions, getRandomQuestion } from '@/lib/utils';
+import { getRandomQuestion } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
 import LogRocket from 'logrocket';
 
 export interface Question {
 	question: string;
-	options: Option[];
-}
-
-export interface Option {
-	option: string;
-	points: Points[];
-}
-
-export interface Points {
-	result: string;
-	points: number;
+	options: string[];
+	answer?: string;
 }
 
 export default function Home() {
@@ -31,13 +22,8 @@ export default function Home() {
 	const [questions, setQuestions] = useState<Question[]>([]);
 
 	const [usingSample, setUsingSample] = useState<boolean>(true); // TODO: Remove this
-	const [radioAnswer, setRadioAnswer] = useState('');
-	const [results, setResults] = useState<Points[]>([]);
 	const [finalResult, setFinalResult] = useState<string>('');
 	const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
-	const [selectedOptions, setSelectedOptions] = useState<Option[]>(
-		new Array(questions.length).fill(null)
-	);
 
 	useEffect(() => {
 		if (usingSample) {
@@ -64,34 +50,6 @@ export default function Home() {
 			setResult('');
 		}
 	}, [loading, result]);
-
-	useEffect(() => {
-		if (questions.length > 0 && !loading) {
-			// Step 1: Flatten the array of questions and options to get all points
-			const allPoints: Points[] = questions.flatMap((question) =>
-				question.options.flatMap((option) =>
-					option.points.map((point) => ({
-						...point,
-						points: 0, // Set points to 0 for each point
-					}))
-				)
-			);
-
-			// get unique results
-			const uniqueResults = allPoints.reduce((acc, current) => {
-				const x = acc.find((item) => item.result === current.result);
-				if (!x) {
-					return acc.concat([current]);
-				} else {
-					return acc;
-				}
-			}, [] as Points[]);
-
-			console.log('uniqueResults', uniqueResults);
-
-			setResults(uniqueResults);
-		}
-	}, [questions, loading]);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -133,45 +91,53 @@ export default function Home() {
 		}
 	};
 
-	const handleOptionChange = (
-		selectedOption: Option,
-		questionIndex: number
-	) => {
-		const previousOption = selectedOptions[questionIndex];
-
-		let newResults = [...results];
-
-		// If an option was previously selected, subtract its points from the total
-		if (previousOption) {
-			newResults = newResults.map((result) => {
-				const prevPoint = previousOption.points.find(
-					(point) => point.result === result.result
-				);
-				return prevPoint
-					? { ...result, points: result.points - prevPoint.points }
-					: result;
-			});
-		}
-
-		// Add the selected option's points to the total
-		newResults = newResults.map((result) => {
-			const selectedPoint = selectedOption.points.find(
-				(point) => point.result === result.result
-			);
-			return selectedPoint
-				? { ...result, points: result.points + selectedPoint.points }
-				: result;
-		});
-
-		// Update the state with the new totals and the new selected option
-		console.log('newResults', newResults);
-		setResults(newResults);
-		setSelectedOptions((prevSelectedOptions) => {
-			const newSelectedOptions = [...prevSelectedOptions];
-			newSelectedOptions[questionIndex] = selectedOption;
-			return newSelectedOptions;
-		});
+	const handleOptionChange = (value: string, index: number) => {
+		const newQuestions = [...questions];
+		newQuestions[index].answer = value;
 	};
+
+	const getResult = async () => {
+		try {
+			const newQuestions = questions.map((question) => {
+				return {
+					question: question.question,
+					answer: question.answer,
+				};
+			});
+
+			const response = await fetch('api/get-answer', {
+				method: 'POST',
+				body: JSON.stringify({
+					prompt: input || sample,
+					questions: newQuestions,
+				}),
+			});
+			if (!response.ok) {
+				throw new Error(response.statusText);
+			}
+
+			// This data is a ReadableStream
+			const data = response.body;
+			if (!data) {
+				throw new Error('No data');
+			}
+
+			const reader = data.getReader();
+			const decoder = new TextDecoder();
+			let done = false;
+
+			while (!done) {
+				const { value, done: doneReading } = await reader.read();
+				done = doneReading;
+				const chunkValue = decoder.decode(value);
+				setFinalResult((prev) => `${prev}${chunkValue}`);
+				console.log('final result', chunkValue);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	return (
 		<main className='flex min-h-screen flex-col gap-10 py-20 px-10 md:py-24 md:px-24 md:max-w-4xl mx-auto'>
 			<div>
@@ -231,15 +197,9 @@ export default function Home() {
 			{questions?.length > 0 && !loading && (
 				<>
 					<form
-						onSubmit={(e) => {
+						onSubmit={async (e) => {
 							e.preventDefault();
-							if (results.length > 0) {
-								const maxPoints = Math.max(...results.map((r) => r.points));
-								const topResult = results.find((r) => r.points === maxPoints);
-								setFinalResult(topResult?.result || 'No results');
-							} else {
-								setFinalResult('No results');
-							}
+							await getResult();
 						}}
 						className='space-y-4'
 					>
@@ -249,29 +209,21 @@ export default function Home() {
 									<p className='font-bold'>{question.question}</p>
 									<RadioGroup
 										onValueChange={(newValue) => {
-											const selectedOption = question.options.find(
-												(o) => o.option === newValue
-											) as Option;
-											handleOptionChange(selectedOption, questionIndex);
+											handleOptionChange(newValue, questionIndex);
 										}}
 										required
 									>
 										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
 												question.options.map(
-													(option: Option, index: number) => {
+													(option: string, index: number) => {
 														return (
 															<div
 																className='flex space-x-2 items-center'
 																key={index}
 															>
-																<RadioGroupItem
-																	value={option.option}
-																	id={option.option}
-																/>
-																<label htmlFor={option.option}>
-																	{option.option}
-																</label>
+																<RadioGroupItem value={option} id={option} />
+																<label htmlFor={option}>{option}</label>
 															</div>
 														);
 													}
@@ -282,10 +234,10 @@ export default function Home() {
 							);
 						})}
 						{finalResult && (
-							<p className='text-lg font-bold'>
-								Your final result:{' '}
-								<span className='text-purple-400'> {finalResult}</span>
-							</p>
+							<div>
+								<p className='text-lg font-bold'>Your final result: </p>
+								<p dangerouslySetInnerHTML={{ __html: finalResult }} />
+							</div>
 						)}
 
 						<Button type='submit'>Submit</Button>
