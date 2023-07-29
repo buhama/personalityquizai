@@ -70,12 +70,16 @@ export async function POST(req: Request) {
 
 	// Request the OpenAI API for the response based on the prompt
 	const response = await openai.createChatCompletion({
-		model: 'gpt-3.5-turbo',
+		model: 'gpt-3.5-turbo-16k-0613',
 		stream: true,
 		messages: [
 			{
 				role: 'system',
 				content: `{\n\trole: 'system',\n\tcontent:\n\t\t\"You're going to help me generate personality quizzes for my personality quizzes website. You will be given a prompt and you will generate ${numberOfQuestions} questions for that prompt. Each question will be multiple choice with 4 options. Each question should be something tells you something about that persons personality, be creative. You can create scenarios, ask for preferences, or more. Then depending on the users choices, I will assign a result to the user. Each answer should assign a points value to one of the potential results. The questions JSON should include how many points go towards each result based on the answer Create both the questions and answers JSON for this prompt. Here are the types \\n\\ninterface Questions {\\n   question: string;\\n   options: Options[];\\n}\\n\\ninterface Options {\\n   option: string;\\n   points: { result: Result, points: number }[];\\n}\"\n}`,
+			},
+			{
+				role: 'system',
+				content: `There should be ${numberOfQuestions} total`,
 			},
 			{
 				role: 'user',
