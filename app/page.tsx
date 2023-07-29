@@ -201,12 +201,20 @@ export default function Home() {
 				</form>
 			</div>
 			{loading && (
-				<div>
-					<div className='flex items-center space-x-4'>
-						<Skeleton className='h-12 w-12 rounded-full' />
-						<div className='space-y-2'>
-							<Skeleton className='h-4 w-[250px]' />
-							<Skeleton className='h-4 w-[200px]' />
+				<div className='w-full flex items-center'>
+					<div className='w-full'>
+						<div className='flex w-full justify-center space-x-4'>
+							<Skeleton className='h-12 w-12 rounded-full' />
+							<div className='space-y-2'>
+								<Skeleton className='h-4 w-[250px]' />
+								<Skeleton className='h-4 w-[200px]' />
+							</div>
+						</div>
+						<div className='text-xs flex justify-center w-full text-center mt-4 text-gray-400 animate-pulse'>
+							<p className='w-[250px]'>
+								Loading... This can take a while depending on the number of
+								questions
+							</p>
 						</div>
 					</div>
 				</div>
