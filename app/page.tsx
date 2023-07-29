@@ -135,7 +135,7 @@ export default function Home() {
 		setResults([...newResults]);
 	};
 	return (
-		<main className='flex min-h-screen flex-col gap-10 p-24 max-w-4xl mx-auto'>
+		<main className='flex min-h-screen flex-col gap-10 py-20 px-10 md:py-24 md:px-24 md:max-w-4xl mx-auto'>
 			<div>
 				<h2 className='text-xl font-bold pb-2'>
 					Create your own personality quiz!
