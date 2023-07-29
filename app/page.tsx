@@ -149,54 +149,58 @@ export default function Home() {
 			)}
 			{questions?.length > 0 && !loading && (
 				<>
-					{questions.map((question: Question, index: number) => {
-						return (
-							<div key={question.question}>
-								<p className='font-bold'>{question.question}</p>
-								<RadioGroup
-									onValueChange={(newValue) =>
-										handleOptionChange(
-											questions
-												.flatMap((q) => q.options)
-												.find((o) => o.option === newValue) as Option
-										)
-									}
-								>
-									<div className='flex flex-col' key={index}>
-										{question.options &&
-											question.options.map((option: Option, index: number) => {
-												return (
-													<div
-														className='flex space-x-2 items-center'
-														key={index}
-													>
-														<RadioGroupItem
-															value={option.option}
-															id={option.option}
-														/>
-														<label htmlFor={option.option}>
-															{option.option}
-														</label>
-													</div>
-												);
-											})}
-									</div>
-								</RadioGroup>
-							</div>
-						);
-					})}
-					<Button
-						onClick={() =>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
 							setFinalResult(
 								//final the result with the most points
 								results.reduce((prev, current) =>
 									prev.points > current.points ? prev : current
 								).result
-							)
-						}
+							);
+						}}
 					>
-						Submit
-					</Button>
+						{questions.map((question: Question, index: number) => {
+							return (
+								<div key={question.question}>
+									<p className='font-bold'>{question.question}</p>
+									<RadioGroup
+										onValueChange={(newValue) =>
+											handleOptionChange(
+												questions
+													.flatMap((q) => q.options)
+													.find((o) => o.option === newValue) as Option
+											)
+										}
+										required
+									>
+										<div className='flex flex-col' key={index}>
+											{question.options &&
+												question.options.map(
+													(option: Option, index: number) => {
+														return (
+															<div
+																className='flex space-x-2 items-center'
+																key={index}
+															>
+																<RadioGroupItem
+																	value={option.option}
+																	id={option.option}
+																/>
+																<label htmlFor={option.option}>
+																	{option.option}
+																</label>
+															</div>
+														);
+													}
+												)}
+										</div>
+									</RadioGroup>
+								</div>
+							);
+						})}
+						<Button type='submit'>Submit</Button>
+					</form>
 					{finalResult && <p>Your final result: {finalResult}</p>}
 				</>
 			)}
