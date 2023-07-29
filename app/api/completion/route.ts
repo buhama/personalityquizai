@@ -82,6 +82,11 @@ export async function POST(req: Request) {
 				content: `There should be ${numberOfQuestions} total`,
 			},
 			{
+				role: 'system',
+				content:
+					'Make it so that there arent too many results. Do about 3-5 results per 10 questions',
+			},
+			{
 				role: 'user',
 				content: prompt,
 			},
