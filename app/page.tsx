@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SampleQuestions } from '@/lib/utils';
+import { SampleQuestions, getRandomQuestion } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
 
 export interface Question {
@@ -23,14 +23,28 @@ export interface Points {
 }
 
 export default function Home() {
+	const [sample, setSample] = useState('');
 	const [input, setInput] = useState('');
 	const [result, setResult] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [questions, setQuestions] = useState<Question[]>(SampleQuestions);
+	const [questions, setQuestions] = useState<Question[]>([]);
+
+	const [usingSample, setUsingSample] = useState<boolean>(true); // TODO: Remove this
 	const [radioAnswer, setRadioAnswer] = useState('');
 	const [results, setResults] = useState<Points[]>([]);
 	const [finalResult, setFinalResult] = useState<string>('');
 	const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
+	const [selectedOptions, setSelectedOptions] = useState<Option[]>(
+		new Array(questions.length).fill(null)
+	);
+
+	useEffect(() => {
+		if (usingSample) {
+			const randomQuestions = getRandomQuestion();
+			setQuestions(randomQuestions.data);
+			setSample(randomQuestions.prompt);
+		}
+	}, []);
 
 	useEffect(() => {
 		if (!loading && result.length > 0) {
@@ -79,6 +93,7 @@ export default function Home() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
+			setUsingSample(false);
 			setLoading(true);
 			const response = await fetch('api/completion', {
 				method: 'POST',
@@ -115,24 +130,44 @@ export default function Home() {
 		}
 	};
 
-	const handleOptionChange = (option: Option) => {
-		const optionPoints = option.points;
-		const newResults = results.map((result) => {
-			const optionPoint = optionPoints.find(
+	const handleOptionChange = (
+		selectedOption: Option,
+		questionIndex: number
+	) => {
+		const previousOption = selectedOptions[questionIndex];
+
+		let newResults = [...results];
+
+		// If an option was previously selected, subtract its points from the total
+		if (previousOption) {
+			newResults = newResults.map((result) => {
+				const prevPoint = previousOption.points.find(
+					(point) => point.result === result.result
+				);
+				return prevPoint
+					? { ...result, points: result.points - prevPoint.points }
+					: result;
+			});
+		}
+
+		// Add the selected option's points to the total
+		newResults = newResults.map((result) => {
+			const selectedPoint = selectedOption.points.find(
 				(point) => point.result === result.result
 			);
-			if (optionPoint) {
-				return {
-					...result,
-					points: optionPoint.points,
-				};
-			}
-			return result;
+			return selectedPoint
+				? { ...result, points: result.points + selectedPoint.points }
+				: result;
 		});
 
+		// Update the state with the new totals and the new selected option
 		console.log('newResults', newResults);
-
-		setResults([...newResults]);
+		setResults(newResults);
+		setSelectedOptions((prevSelectedOptions) => {
+			const newSelectedOptions = [...prevSelectedOptions];
+			newSelectedOptions[questionIndex] = selectedOption;
+			return newSelectedOptions;
+		});
 	};
 	return (
 		<main className='flex min-h-screen flex-col gap-10 py-20 px-10 md:py-24 md:px-24 md:max-w-4xl mx-auto'>
@@ -176,6 +211,11 @@ export default function Home() {
 					</div>
 				</div>
 			)}
+			{usingSample && (
+				<p className='text-lg font-bold -mb-8'>
+					Current Sample: <span className='text-purple-400'> {sample}</span>
+				</p>
+			)}
 			{questions?.length > 0 && !loading && (
 				<>
 					<form
@@ -193,21 +233,20 @@ export default function Home() {
 						}}
 						className='space-y-4'
 					>
-						{questions.map((question: Question, index: number) => {
+						{questions.map((question: Question, questionIndex: number) => {
 							return (
 								<div key={question.question}>
 									<p className='font-bold'>{question.question}</p>
 									<RadioGroup
-										onValueChange={(newValue) =>
-											handleOptionChange(
-												questions
-													.flatMap((q) => q.options)
-													.find((o) => o.option === newValue) as Option
-											)
-										}
+										onValueChange={(newValue) => {
+											const selectedOption = question.options.find(
+												(o) => o.option === newValue
+											) as Option;
+											handleOptionChange(selectedOption, questionIndex);
+										}}
 										required
 									>
-										<div className='flex flex-col' key={index}>
+										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
 												question.options.map(
 													(option: Option, index: number) => {
@@ -232,9 +271,15 @@ export default function Home() {
 								</div>
 							);
 						})}
+						{finalResult && (
+							<p className='text-lg font-bold'>
+								Your final result:{' '}
+								<span className='text-purple-400'> {finalResult}</span>
+							</p>
+						)}
+
 						<Button type='submit'>Submit</Button>
 					</form>
-					{finalResult && <p>Your final result: {finalResult}</p>}
 				</>
 			)}
 		</main>

@@ -6,87 +6,561 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export const SampleQuestions: Question[] = [
+
+export const SampleQuestions: { prompt: string; data: Question[] }[] = [
 	{
-		question: 'What is your ideal vacation destination?',
-		options: [
+		prompt: 'What is your attachment style',
+		data: [
 			{
-				option: 'Relaxing on a private island',
-				points: [
+				question: 'How do you react when someone is upset with you?',
+				options: [
 					{
-						result: 'Richard Branson',
-						points: 2,
+						option: 'I try to fix things immediately',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I withdraw and need space',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I stay calm and try to understand',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I fluctuate between needing them and wanting space',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'Exploring ancient ruins',
-				points: [
+				question: 'How do you feel about relationships?',
+				options: [
 					{
-						result: 'Elon Musk',
-						points: 2,
+						option: "I worry about my partner's commitment",
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I value my independence more',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I find it easy to get close to others',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I am scared of getting too close or being distant',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'Touring world-class museums',
-				points: [
+				question: 'What’s your first reaction after a fight?',
+				options: [
 					{
-						result: 'Jeff Bezos',
-						points: 2,
+						option: 'I need reassurance and connection',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I like to deal with it on my own',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I address the issue and seek mutual understanding',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I avoid discussing the problem',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'Adventurous safari',
-				points: [
+				question: 'What best describes your feelings in a relationship?',
+				options: [
 					{
-						result: 'Mark Zuckerberg',
-						points: 2,
+						option: 'I often need validation',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I enjoy being alone more than being with a partner',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I feel comfortable with intimacy and dependence',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I struggle with trusting others completely',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
+					},
+				],
+			},
+			{
+				question: 'How do you view yourself in relation to others?',
+				options: [
+					{
+						option: 'I worry about not being good enough',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I prefer self-reliance over depending on others',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I am comfortable with both giving and receiving support',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: `I sometimes think I'm unworthy of love, then I feel smothered`,
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
 					},
 				],
 			},
 		],
 	},
 	{
-		question: 'Which product would you invest in?',
-		options: [
+		prompt: 'What is your hatred language',
+		data: [
 			{
-				option: 'Space exploration',
-				points: [
+				question: 'What annoys you most in a conversation?',
+				options: [
 					{
-						result: 'Elon Musk',
-						points: 2,
+						option: 'Being interrupted',
+						points: [
+							{ result: 'Disrespect', points: 3 },
+							{ result: 'Irrelevance', points: 1 },
+						],
+					},
+					{
+						option: 'Negativity',
+						points: [
+							{ result: 'Pessimism', points: 3 },
+							{ result: 'Disrespect', points: 1 },
+						],
+					},
+					{
+						option: 'Lack of depth',
+						points: [
+							{ result: 'Superficiality', points: 3 },
+							{ result: 'Pessimism', points: 1 },
+						],
+					},
+					{
+						option: 'Off-topic blabbering',
+						points: [
+							{ result: 'Irrelevance', points: 3 },
+							{ result: 'Superficiality', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'E-commerce',
-				points: [
+				question: 'What behavior from others makes you uncomfortable?',
+				options: [
 					{
-						result: 'Jeff Bezos',
-						points: 2,
+						option: 'Disregard for personal boundaries',
+						points: [
+							{ result: 'Disrespect', points: 3 },
+							{ result: 'Irrelevance', points: 1 },
+						],
+					},
+					{
+						option: 'Constant complaining',
+						points: [
+							{ result: 'Pessimism', points: 3 },
+							{ result: 'Disrespect', points: 1 },
+						],
+					},
+					{
+						option: 'Shallow interactions',
+						points: [
+							{ result: 'Superficiality', points: 3 },
+							{ result: 'Pessimism', points: 1 },
+						],
+					},
+					{
+						option: 'Random, irrelevant chatter',
+						points: [
+							{ result: 'Irrelevance', points: 3 },
+							{ result: 'Superficiality', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'Social media',
-				points: [
+				question: 'How do you react when someone breaks a promise?',
+				options: [
 					{
-						result: 'Mark Zuckerberg',
-						points: 2,
+						option: 'Feel deeply disrespected',
+						points: [
+							{ result: 'Disrespect', points: 3 },
+							{ result: 'Superficiality', points: 1 },
+						],
+					},
+					{
+						option: 'Focus on the negative impact',
+						points: [
+							{ result: 'Pessimism', points: 3 },
+							{ result: 'Irrelevance', points: 1 },
+						],
+					},
+					{
+						option: 'Bemoan the lack of depth in their commitment',
+						points: [
+							{ result: 'Superficiality', points: 3 },
+							{ result: 'Disrespect', points: 1 },
+						],
+					},
+					{
+						option: 'Annoyed by the deviation from the main commitment',
+						points: [
+							{ result: 'Irrelevance', points: 3 },
+							{ result: 'Pessimism', points: 1 },
+						],
 					},
 				],
 			},
 			{
-				option: 'Travel and leisure',
-				points: [
+				question: 'What’s your biggest pet peeve in a relationship?',
+				options: [
 					{
-						result: 'Richard Branson',
-						points: 2,
+						option: 'Disrespect of personal boundaries',
+						points: [
+							{ result: 'Disrespect', points: 3 },
+							{ result: 'Superficiality', points: 1 },
+						],
+					},
+					{
+						option: 'Excessive negativity',
+						points: [
+							{ result: 'Pessimism', points: 3 },
+							{ result: 'Irrelevance', points: 1 },
+						],
+					},
+					{
+						option: 'Lack of deep, meaningful conversation',
+						points: [
+							{ result: 'Superficiality', points: 3 },
+							{ result: 'Disrespect', points: 1 },
+						],
+					},
+					{
+						option: 'Constantly straying from important topics',
+						points: [
+							{ result: 'Irrelevance', points: 3 },
+							{ result: 'Pessimism', points: 1 },
+						],
+					},
+				],
+			},
+			{
+				question: 'Which communication style bothers you the most?',
+				options: [
+					{
+						option: 'Rude and dismissive',
+						points: [
+							{ result: 'Disrespect', points: 3 },
+							{ result: 'Superficiality', points: 1 },
+						],
+					},
+					{
+						option: 'Overly critical and negative',
+						points: [
+							{ result: 'Pessimism', points: 3 },
+							{ result: 'Irrelevance', points: 1 },
+						],
+					},
+					{
+						option: 'Superficial and vague',
+						points: [
+							{ result: 'Superficiality', points: 3 },
+							{ result: 'Disrespect', points: 1 },
+						],
+					},
+					{
+						option: 'Wandering and off-topic',
+						points: [
+							{ result: 'Irrelevance', points: 3 },
+							{ result: 'Pessimism', points: 1 },
+						],
+					},
+				],
+			},
+		],
+	},
+	{
+		prompt: 'What startup should you start',
+		data: [
+			{
+				question: 'What are you most passionate about?',
+				options: [
+					{
+						option: 'Creating new technologies',
+						points: [
+							{
+								result: 'Tech Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Promoting healthier living',
+						points: [
+							{
+								result: 'Health and Wellness Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Influencing through media',
+						points: [
+							{
+								result: 'Media Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Improving the environment',
+						points: [
+							{
+								result: 'Sustainable Startup',
+								points: 2,
+							},
+						],
+					},
+				],
+			},
+			{
+				question: 'What type of work environment suits you best?',
+				options: [
+					{
+						option: 'Fast-paced and innovative',
+						points: [
+							{
+								result: 'Tech Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Balanced and holistic',
+						points: [
+							{
+								result: 'Health and Wellness Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Creative and dynamic',
+						points: [
+							{
+								result: 'Media Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Eco-friendly and conservation-focused',
+						points: [
+							{
+								result: 'Sustainable Startup',
+								points: 2,
+							},
+						],
+					},
+				],
+			},
+			{
+				question: 'Which of these excites you the most?',
+				options: [
+					{
+						option: 'Building the next big app',
+						points: [
+							{
+								result: 'Tech Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Designing a wellness program',
+						points: [
+							{
+								result: 'Health and Wellness Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Creating content that inspires',
+						points: [
+							{
+								result: 'Media Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Developing a sustainable product',
+						points: [
+							{
+								result: 'Sustainable Startup',
+								points: 2,
+							},
+						],
+					},
+				],
+			},
+			{
+				question: 'What’s the most important aspect of a business to you?',
+				options: [
+					{
+						option: 'Disruptive innovation',
+						points: [
+							{
+								result: 'Tech Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Improving wellbeing',
+						points: [
+							{
+								result: 'Health and Wellness Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Engaging storytelling',
+						points: [
+							{
+								result: 'Media Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'Positive environmental impact',
+						points: [
+							{
+								result: 'Sustainable Startup',
+								points: 2,
+							},
+						],
+					},
+				],
+			},
+			{
+				question: 'Where do you see the most opportunity for impact?',
+				options: [
+					{
+						option: 'In the digital space',
+						points: [
+							{
+								result: 'Tech Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'In personal health and fitness',
+						points: [
+							{
+								result: 'Health and Wellness Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'In multimedia platforms',
+						points: [
+							{
+								result: 'Media Startup',
+								points: 2,
+							},
+						],
+					},
+					{
+						option: 'In green technologies',
+						points: [
+							{
+								result: 'Sustainable Startup',
+								points: 2,
+							},
+						],
 					},
 				],
 			},
 		],
 	},
 ];
+
+export const getRandomQuestion = (): { prompt: string; data: Question[] } => {
+	const index = Math.floor(Math.random() * SampleQuestions.length);
+	return SampleQuestions[index];
+};
