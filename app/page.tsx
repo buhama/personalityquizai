@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SampleQuestions, getRandomQuestion } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
+import LogRocket from 'logrocket';
 
 export interface Question {
 	question: string;
@@ -44,6 +45,8 @@ export default function Home() {
 			setQuestions(randomQuestions.data);
 			setSample(randomQuestions.prompt);
 		}
+
+		LogRocket.init('lpw8gr/aipersonalityquiz');
 	}, []);
 
 	useEffect(() => {
