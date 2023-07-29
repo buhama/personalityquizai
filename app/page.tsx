@@ -177,7 +177,7 @@ export default function Home() {
 				</h2>
 				<form
 					onSubmit={(e) => handleSubmit(e)}
-					className='flex items-end gap-2'
+					className='flex md:flex-row flex-col md:items-end gap-2'
 				>
 					<div className='w-full'>
 						<p className='font-bold text-xs pb-1'>Your question</p>
@@ -194,10 +194,11 @@ export default function Home() {
 							onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
 							type='number'
 							placeholder='Number of questions'
-							className='w-28'
+							className='md:w-28'
 						/>
 					</div>
-					<Button>Start</Button>
+					<Button className='mt-2 md:mt-0'>Start</Button>
+					<hr className='md:hidden mt-10' />
 				</form>
 			</div>
 			{loading && (
