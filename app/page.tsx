@@ -45,7 +45,6 @@ export default function Home() {
 
 			setQuestions(questions);
 			setResult('');
-			console.log('objectResult', parsedResult);
 		}
 	}, [loading, result]);
 
@@ -182,11 +181,14 @@ export default function Home() {
 					<form
 						onSubmit={(e) => {
 							e.preventDefault();
+							const maxPoints = Math.max(...results.map((r) => r.points));
+							const topResults = results
+								.filter((r) => r.points === maxPoints)
+								.map((r) => r.result);
 							setFinalResult(
-								//final the result with the most points
-								results.reduce((prev, current) =>
-									prev.points > current.points ? prev : current
-								).result
+								topResults.length > 1
+									? `Tie between ${topResults.join(' & ')}`
+									: topResults[0]
 							);
 						}}
 						className='space-y-4'

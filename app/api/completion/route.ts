@@ -84,7 +84,7 @@ export async function POST(req: Request) {
 			{
 				role: 'system',
 				content:
-					'Make it so that there arent too many results. Do about 3-5 results per 10 questions',
+					'Make it so that there arent too many unique results. Do about 3-5 results per 10 questions',
 			},
 			{
 				role: 'user',
