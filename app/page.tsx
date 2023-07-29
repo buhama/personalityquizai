@@ -30,9 +30,10 @@ export default function Home() {
 	const [radioAnswer, setRadioAnswer] = useState('');
 	const [results, setResults] = useState<Points[]>([]);
 	const [finalResult, setFinalResult] = useState<string>('');
+	const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
 
 	useEffect(() => {
-		if (!loading && result) {
+		if (!loading && result.length > 0) {
 			let parsedResult = JSON.parse(result);
 			parsedResult.function_call.arguments = JSON.parse(
 				parsedResult.function_call.arguments
@@ -134,17 +135,45 @@ export default function Home() {
 		setResults([...newResults]);
 	};
 	return (
-		<main className='flex min-h-screen flex-col justify-between p-24'>
-			<form onSubmit={(e) => handleSubmit(e)}>
-				<Input
-					value={input}
-					onChange={(e) => setInput(e.target.value)}
-					placeholder='Describe your business...'
-				/>
-			</form>
+		<main className='flex min-h-screen flex-col gap-10 p-24 max-w-4xl mx-auto'>
+			<div>
+				<h2 className='text-xl font-bold pb-2'>
+					Create your own personality quiz!
+				</h2>
+				<form
+					onSubmit={(e) => handleSubmit(e)}
+					className='flex items-end gap-2'
+				>
+					<div className='w-full'>
+						<p className='font-bold text-xs pb-1'>Your question</p>
+						<Input
+							value={input}
+							onChange={(e) => setInput(e.target.value)}
+							placeholder='What game of thrones character are you?'
+						/>
+					</div>
+					<div>
+						<p className='font-bold text-xs pb-1'># of questions</p>
+						<Input
+							value={numberOfQuestions}
+							onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
+							type='number'
+							placeholder='Number of questions'
+							className='w-28'
+						/>
+					</div>
+					<Button>Start</Button>
+				</form>
+			</div>
 			{loading && (
 				<div>
-					<Skeleton className='w-[100px] h-[20px] rounded-full' />
+					<div className='flex items-center space-x-4'>
+						<Skeleton className='h-12 w-12 rounded-full' />
+						<div className='space-y-2'>
+							<Skeleton className='h-4 w-[250px]' />
+							<Skeleton className='h-4 w-[200px]' />
+						</div>
+					</div>
 				</div>
 			)}
 			{questions?.length > 0 && !loading && (
@@ -159,6 +188,7 @@ export default function Home() {
 								).result
 							);
 						}}
+						className='space-y-4'
 					>
 						{questions.map((question: Question, index: number) => {
 							return (
