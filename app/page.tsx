@@ -85,6 +85,7 @@ export default function Home() {
 				method: 'POST',
 				body: JSON.stringify({
 					prompt: input,
+					numberOfQuestions,
 				}),
 			});
 			if (!response.ok) {
