@@ -233,15 +233,13 @@ export default function Home() {
 					<form
 						onSubmit={(e) => {
 							e.preventDefault();
-							const maxPoints = Math.max(...results.map((r) => r.points));
-							const topResults = results
-								.filter((r) => r.points === maxPoints)
-								.map((r) => r.result);
-							setFinalResult(
-								topResults.length > 1
-									? `Tie between ${topResults.join(' & ')}`
-									: topResults[0]
-							);
+							if (results.length > 0) {
+								const maxPoints = Math.max(...results.map((r) => r.points));
+								const topResult = results.find((r) => r.points === maxPoints);
+								setFinalResult(topResult?.result || 'No results');
+							} else {
+								setFinalResult('No results');
+							}
 						}}
 						className='space-y-4'
 					>
