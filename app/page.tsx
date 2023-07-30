@@ -93,9 +93,19 @@ export default function Home() {
 		}
 	};
 
-	const handleOptionChange = (value: string, index: number) => {
+	const handleOptionChange = (
+		value: string,
+		customAnswer: string,
+		index: number
+	) => {
 		const newQuestions = [...questions];
-		newQuestions[index].answer = value;
+		if (customAnswer) {
+			newQuestions[index].answer = customAnswer;
+		} else {
+			newQuestions[index].answer = value;
+		}
+
+		setQuestions(newQuestions);
 	};
 
 	const getResult = async () => {
@@ -216,13 +226,13 @@ export default function Home() {
 									<p className='font-bold'>{question.question}</p>
 									<RadioGroup
 										onValueChange={(newValue) => {
-											handleOptionChange(newValue, questionIndex);
+											handleOptionChange(newValue, '', questionIndex);
 										}}
 										required
 									>
 										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
-												question.options.map(
+												[...question.options, 'Other'].map(
 													(option: string, index: number) => {
 														return (
 															<div
@@ -237,9 +247,20 @@ export default function Home() {
 												)}
 										</div>
 									</RadioGroup>
-									{questions[questionIndex].answer === 'Other' && (
-										<Input className='w-1/2 mt-3' placeholder='Other' />
-									)}
+									{question.answer &&
+										!question.options.includes(question.answer) && (
+											<Input
+												className='w-1/2 mt-3'
+												placeholder='Other'
+												onBlur={(e) =>
+													handleOptionChange(
+														'Other',
+														e.target.value,
+														questionIndex
+													)
+												}
+											/>
+										)}
 								</div>
 							);
 						})}
