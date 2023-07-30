@@ -21,6 +21,7 @@ export default function Home() {
 	const [loading, setLoading] = useState(false);
 	const [answerLoading, setAnswerLoading] = useState(false); // TODO: Remove this
 	const [questions, setQuestions] = useState<Question[]>([]);
+	const [lastSubmittedAnswer, setLastSubmittedAnswer] = useState<string>('');
 
 	const [usingSample, setUsingSample] = useState<boolean>(true); // TODO: Remove this
 	const [finalResult, setFinalResult] = useState<string>('');
@@ -111,14 +112,20 @@ export default function Home() {
 	const getResult = async () => {
 		if (answerLoading) return;
 		try {
-			setAnswerLoading(true);
-			setFinalResult('');
 			const newQuestions = questions.map((question) => {
 				return {
 					question: question.question,
 					answer: question.answer,
 				};
 			});
+
+			if (lastSubmittedAnswer === JSON.stringify(newQuestions)) {
+				return;
+			}
+			setAnswerLoading(true);
+			setFinalResult('');
+
+			setLastSubmittedAnswer(JSON.stringify(newQuestions));
 
 			const response = await fetch('api/get-answer', {
 				method: 'POST',
