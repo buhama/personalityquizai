@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 			},
 			{
 				role: 'system',
-				content: `There should be ${numberOfQuestions} total`,
+				content: `There should be ${numberOfQuestions} total. Dont ask the same question more than once. `,
 			},
 			{
 				role: 'system',
