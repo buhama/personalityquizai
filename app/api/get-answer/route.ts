@@ -24,16 +24,18 @@ export async function POST(req: Request) {
 			{
 				role: 'system',
 				content:
-					'you are part of an ai assistant that creates online quizzes based on prompts. the quiz has already been created, its time to get the result. You are going to be provided with the prompt and the questions and you have to give a result based on the answers with some context as well.',
+					'you are part of an ai assistant that creates online quizzes based on prompts. the quiz has already been created, its time to get the result. You are going to be provided with the prompt and the questions and you have to give a result based on the answers with some context as well. Create a list of results and pick from them. Dont pick the most popular one, pick one that is relevant to the answers.',
 			},
 			{
 				role: 'system',
-				content: 'The prompt is: ' + prompt,
+				content:
+					'The prompt is: ' +
+					prompt +
+					'Answer the prompt for the user based on their answers to questions found here ' +
+					JSON.stringify(questions) +
+					'MAKE SURE TO ANSWER BASED ON THE ANSWERS FROM THE QUESTOINS',
 			},
-			{
-				role: 'system',
-				content: 'The questions are: ' + questions,
-			},
+
 			{
 				role: 'system',
 				content:

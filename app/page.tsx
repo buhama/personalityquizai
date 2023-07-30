@@ -98,6 +98,7 @@ export default function Home() {
 
 	const getResult = async () => {
 		try {
+			setFinalResult('');
 			const newQuestions = questions.map((question) => {
 				return {
 					question: question.question,
@@ -215,7 +216,7 @@ export default function Home() {
 									>
 										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
-												question.options.map(
+												[...question.options, 'Other'].map(
 													(option: string, index: number) => {
 														return (
 															<div
@@ -230,6 +231,10 @@ export default function Home() {
 												)}
 										</div>
 									</RadioGroup>
+									{questions[questionIndex].answer}
+									{questions[questionIndex].answer === 'Other' && (
+										<Input className='w-1/2 mt-3' placeholder='Other' />
+									)}
 								</div>
 							);
 						})}
