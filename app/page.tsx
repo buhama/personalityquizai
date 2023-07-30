@@ -216,7 +216,7 @@ export default function Home() {
 									>
 										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
-												[...question.options, 'Other'].map(
+												question.options.map(
 													(option: string, index: number) => {
 														return (
 															<div
