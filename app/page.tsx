@@ -19,6 +19,7 @@ export default function Home() {
 	const [input, setInput] = useState('');
 	const [result, setResult] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [answerLoading, setAnswerLoading] = useState(false); // TODO: Remove this
 	const [questions, setQuestions] = useState<Question[]>([]);
 
 	const [usingSample, setUsingSample] = useState<boolean>(true); // TODO: Remove this
@@ -53,6 +54,7 @@ export default function Home() {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		if (loading) return;
 		try {
 			setUsingSample(false);
 			setLoading(true);
@@ -97,7 +99,9 @@ export default function Home() {
 	};
 
 	const getResult = async () => {
+		if (answerLoading) return;
 		try {
+			setAnswerLoading(true);
 			setFinalResult('');
 			const newQuestions = questions.map((question) => {
 				return {
@@ -136,6 +140,8 @@ export default function Home() {
 			}
 		} catch (e) {
 			console.error(e);
+		} finally {
+			setAnswerLoading(false);
 		}
 	};
 
