@@ -231,7 +231,6 @@ export default function Home() {
 												)}
 										</div>
 									</RadioGroup>
-									{questions[questionIndex].answer}
 									{questions[questionIndex].answer === 'Other' && (
 										<Input className='w-1/2 mt-3' placeholder='Other' />
 									)}
