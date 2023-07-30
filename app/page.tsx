@@ -223,7 +223,9 @@ export default function Home() {
 						{questions.map((question: Question, questionIndex: number) => {
 							return (
 								<div key={question.question}>
-									<p className='font-bold'>{question.question}</p>
+									<p className='font-bold'>
+										{questionIndex + 1}: {question.question}
+									</p>
 									<RadioGroup
 										onValueChange={(newValue) => {
 											handleOptionChange(newValue, '', questionIndex);
