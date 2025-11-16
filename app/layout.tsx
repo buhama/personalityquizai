@@ -17,6 +17,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang='en'>
+			<head>
+				<script>test</script>
+			</head>
 			<body className={inter.className}>
 				<ThemeProvider attribute='class' defaultTheme='system' enableSystem>
 					{children}

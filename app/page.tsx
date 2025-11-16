@@ -10,8 +10,17 @@ import LogRocket from 'logrocket';
 
 export interface Question {
 	question: string;
-	options: string[];
-	answer?: string;
+	options: Option[];
+}
+
+export interface Option {
+	option: string;
+	points: Points[];
+}
+
+export interface Points {
+	result: string;
+	points: number;
 }
 
 export default function Home() {
@@ -19,13 +28,16 @@ export default function Home() {
 	const [input, setInput] = useState('');
 	const [result, setResult] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [answerLoading, setAnswerLoading] = useState(false); // TODO: Remove this
 	const [questions, setQuestions] = useState<Question[]>([]);
-	const [lastSubmittedAnswer, setLastSubmittedAnswer] = useState<string>('');
 
 	const [usingSample, setUsingSample] = useState<boolean>(true); // TODO: Remove this
+	const [radioAnswer, setRadioAnswer] = useState('');
+	const [results, setResults] = useState<Points[]>([]);
 	const [finalResult, setFinalResult] = useState<string>('');
 	const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
+	const [selectedOptions, setSelectedOptions] = useState<Option[]>(
+		new Array(questions.length).fill(null)
+	);
 
 	useEffect(() => {
 		if (usingSample) {
@@ -52,6 +64,34 @@ export default function Home() {
 			setResult('');
 		}
 	}, [loading, result]);
+
+	useEffect(() => {
+		if (questions.length > 0 && !loading) {
+			// Step 1: Flatten the array of questions and options to get all points
+			const allPoints: Points[] = questions.flatMap((question) =>
+				question.options.flatMap((option) =>
+					option.points.map((point) => ({
+						...point,
+						points: 0, // Set points to 0 for each point
+					}))
+				)
+			);
+
+			// get unique results
+			const uniqueResults = allPoints.reduce((acc, current) => {
+				const x = acc.find((item) => item.result === current.result);
+				if (!x) {
+					return acc.concat([current]);
+				} else {
+					return acc;
+				}
+			}, [] as Points[]);
+
+			console.log('uniqueResults', uniqueResults);
+
+			setResults(uniqueResults);
+		}
+	}, [questions, loading]);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -95,71 +135,43 @@ export default function Home() {
 	};
 
 	const handleOptionChange = (
-		value: string,
-		customAnswer: string,
-		index: number
+		selectedOption: Option,
+		questionIndex: number
 	) => {
-		const newQuestions = [...questions];
-		if (customAnswer) {
-			newQuestions[index].answer = customAnswer;
-		} else {
-			newQuestions[index].answer = value;
+		const previousOption = selectedOptions[questionIndex];
+
+		let newResults = [...results];
+
+		// If an option was previously selected, subtract its points from the total
+		if (previousOption) {
+			newResults = newResults.map((result) => {
+				const prevPoint = previousOption.points.find(
+					(point) => point.result === result.result
+				);
+				return prevPoint
+					? { ...result, points: result.points - prevPoint.points }
+					: result;
+			});
 		}
 
-		setQuestions(newQuestions);
-	};
+		// Add the selected option's points to the total
+		newResults = newResults.map((result) => {
+			const selectedPoint = selectedOption.points.find(
+				(point) => point.result === result.result
+			);
+			return selectedPoint
+				? { ...result, points: result.points + selectedPoint.points }
+				: result;
+		});
 
-	const getResult = async () => {
-		if (answerLoading) return;
-		try {
-			const newQuestions = questions.map((question) => {
-				return {
-					question: question.question,
-					answer: question.answer,
-				};
-			});
-
-			if (lastSubmittedAnswer === JSON.stringify(newQuestions)) {
-				return;
-			}
-			setAnswerLoading(true);
-			setFinalResult('');
-
-			setLastSubmittedAnswer(JSON.stringify(newQuestions));
-
-			const response = await fetch('api/get-answer', {
-				method: 'POST',
-				body: JSON.stringify({
-					prompt: input || sample,
-					questions: newQuestions,
-				}),
-			});
-			if (!response.ok) {
-				throw new Error(response.statusText);
-			}
-
-			// This data is a ReadableStream
-			const data = response.body;
-			if (!data) {
-				throw new Error('No data');
-			}
-
-			const reader = data.getReader();
-			const decoder = new TextDecoder();
-			let done = false;
-
-			while (!done) {
-				const { value, done: doneReading } = await reader.read();
-				done = doneReading;
-				const chunkValue = decoder.decode(value);
-				setFinalResult((prev) => `${prev}${chunkValue}`);
-				console.log('final result', chunkValue);
-			}
-		} catch (e) {
-			console.error(e);
-		} finally {
-			setAnswerLoading(false);
-		}
+		// Update the state with the new totals and the new selected option
+		console.log('newResults', newResults);
+		setResults(newResults);
+		setSelectedOptions((prevSelectedOptions) => {
+			const newSelectedOptions = [...prevSelectedOptions];
+			newSelectedOptions[questionIndex] = selectedOption;
+			return newSelectedOptions;
+		});
 	};
 
 	return (
@@ -221,63 +233,61 @@ export default function Home() {
 			{questions?.length > 0 && !loading && (
 				<>
 					<form
-						onSubmit={async (e) => {
+						onSubmit={(e) => {
 							e.preventDefault();
-							await getResult();
+							if (results.length > 0) {
+								const maxPoints = Math.max(...results.map((r) => r.points));
+								const topResult = results.find((r) => r.points === maxPoints);
+								setFinalResult(topResult?.result || 'No results');
+							} else {
+								setFinalResult('No results');
+							}
 						}}
 						className='space-y-4'
 					>
 						{questions.map((question: Question, questionIndex: number) => {
 							return (
 								<div key={question.question}>
-									<p className='font-bold'>
-										{questionIndex + 1}: {question.question}
-									</p>
+									<p className='font-bold'>{question.question}</p>
 									<RadioGroup
 										onValueChange={(newValue) => {
-											handleOptionChange(newValue, '', questionIndex);
+											const selectedOption = question.options.find(
+												(o) => o.option === newValue
+											) as Option;
+											handleOptionChange(selectedOption, questionIndex);
 										}}
 										required
 									>
 										<div className='flex flex-col' key={questionIndex}>
 											{question.options &&
-												[...question.options, 'Other'].map(
-													(option: string, index: number) => {
+												question.options.map(
+													(option: Option, index: number) => {
 														return (
 															<div
 																className='flex space-x-2 items-center'
 																key={index}
 															>
-																<RadioGroupItem value={option} id={option} />
-																<label htmlFor={option}>{option}</label>
+																<RadioGroupItem
+																	value={option.option}
+																	id={option.option}
+																/>
+																<label htmlFor={option.option}>
+																	{option.option}
+																</label>
 															</div>
 														);
 													}
 												)}
 										</div>
 									</RadioGroup>
-									{question.answer &&
-										!question.options.includes(question.answer) && (
-											<Input
-												className='w-1/2 mt-3'
-												placeholder='Other'
-												onBlur={(e) =>
-													handleOptionChange(
-														'Other',
-														e.target.value,
-														questionIndex
-													)
-												}
-											/>
-										)}
 								</div>
 							);
 						})}
 						{finalResult && (
-							<div>
-								<p className='text-lg font-bold'>Your final result: </p>
-								<p dangerouslySetInnerHTML={{ __html: finalResult }} />
-							</div>
+							<p className='text-lg font-bold'>
+								Your final result:{' '}
+								<span className='text-purple-400'> {finalResult}</span>
+							</p>
 						)}
 
 						<Button type='submit'>Submit</Button>

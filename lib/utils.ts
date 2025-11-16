@@ -14,88 +14,102 @@ export const SampleQuestions: { prompt: string; data: Question[] }[] = [
 			{
 				question: 'How do you react when someone is upset with you?',
 				options: [
-					'I try to fix things immediately',
-					'I withdraw and need space',
-					'I stay calm and try to understand',
-					'I fluctuate between needing them and wanting space',
+					{
+						option: 'I try to fix things immediately',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I withdraw and need space',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I stay calm and try to understand',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I fluctuate between needing them and wanting space',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
+					},
 				],
 			},
 			{
 				question: 'How do you feel about relationships?',
-				options: ["I worry about my partner's commitment", 'I value my independence more', 'I find it easy to get close to others', 'I am scared of getting too close or being distant'],
-					
-				
+				options: [
+					{
+						option: "I worry about my partner's commitment",
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I value my independence more',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I find it easy to get close to others',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I am scared of getting too close or being distant',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
+					},
+				],
 			},
 			{
-				question: 'What’s your first reaction after a fight?',
-				options: ['I need reassurance and connection', 'I like to deal with it on my own', 'I address the issue and seek mutual understanding', 'I avoid discussing the problem'],
+				question: "What's your first reaction after a fight?",
+				options: [
+					{
+						option: 'I need reassurance and connection',
+						points: [
+							{ result: 'Anxious-Preoccupied', points: 3 },
+							{ result: 'Secure', points: 1 },
+						],
+					},
+					{
+						option: 'I like to deal with it on my own',
+						points: [
+							{ result: 'Dismissive-Avoidant', points: 3 },
+							{ result: 'Fearful-Avoidant', points: 1 },
+						],
+					},
+					{
+						option: 'I address the issue and seek mutual understanding',
+						points: [
+							{ result: 'Secure', points: 3 },
+							{ result: 'Anxious-Preoccupied', points: 1 },
+						],
+					},
+					{
+						option: 'I avoid discussing the problem',
+						points: [
+							{ result: 'Fearful-Avoidant', points: 3 },
+							{ result: 'Dismissive-Avoidant', points: 1 },
+						],
+					},
+				],
 			},
-			// {
-			// 	question: 'What best describes your feelings in a relationship?',
-			// 	options: [
-			// 		{
-			// 			option: 'I often need validation',
-			// 			points: [
-			// 				{ result: 'Anxious-Preoccupied', points: 3 },
-			// 				{ result: 'Fearful-Avoidant', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: 'I enjoy being alone more than being with a partner',
-			// 			points: [
-			// 				{ result: 'Dismissive-Avoidant', points: 3 },
-			// 				{ result: 'Secure', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: 'I feel comfortable with intimacy and dependence',
-			// 			points: [
-			// 				{ result: 'Secure', points: 3 },
-			// 				{ result: 'Anxious-Preoccupied', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: 'I struggle with trusting others completely',
-			// 			points: [
-			// 				{ result: 'Fearful-Avoidant', points: 3 },
-			// 				{ result: 'Dismissive-Avoidant', points: 1 },
-			// 			],
-			// 		},
-			// 	],
-			// },
-			// {
-			// 	question: 'How do you view yourself in relation to others?',
-			// 	options: [
-			// 		{
-			// 			option: 'I worry about not being good enough',
-			// 			points: [
-			// 				{ result: 'Anxious-Preoccupied', points: 3 },
-			// 				{ result: 'Secure', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: 'I prefer self-reliance over depending on others',
-			// 			points: [
-			// 				{ result: 'Dismissive-Avoidant', points: 3 },
-			// 				{ result: 'Fearful-Avoidant', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: 'I am comfortable with both giving and receiving support',
-			// 			points: [
-			// 				{ result: 'Secure', points: 3 },
-			// 				{ result: 'Anxious-Preoccupied', points: 1 },
-			// 			],
-			// 		},
-			// 		{
-			// 			option: `I sometimes think I'm unworthy of love, then I feel smothered`,
-			// 			points: [
-			// 				{ result: 'Fearful-Avoidant', points: 3 },
-			// 				{ result: 'Dismissive-Avoidant', points: 1 },
-			// 			],
-			// 		},
-			// 	],
-			// },
 		],
 	},
 	// {
