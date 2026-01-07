@@ -38,6 +38,9 @@ export default function Home() {
 	const [selectedOptions, setSelectedOptions] = useState<Option[]>(
 		new Array(questions.length).fill(null)
 	);
+	const [outcomeDescriptions, setOutcomeDescriptions] = useState<string>('');
+	const [questionStyle, setQuestionStyle] = useState<string>('');
+	const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (usingSample) {
@@ -104,6 +107,8 @@ export default function Home() {
 				body: JSON.stringify({
 					prompt: input,
 					numberOfQuestions,
+					outcomeDescriptions: outcomeDescriptions.trim() || undefined,
+					questionStyle: questionStyle.trim() || undefined,
 				}),
 			});
 			if (!response.ok) {
@@ -182,27 +187,64 @@ export default function Home() {
 				</h2>
 				<form
 					onSubmit={(e) => handleSubmit(e)}
-					className='flex md:flex-row flex-col md:items-end gap-2'
+					className='flex flex-col gap-2'
 				>
-					<div className='w-full'>
-						<p className='font-bold text-xs pb-1'>Your question</p>
-						<Input
-							value={input}
-							onChange={(e) => setInput(e.target.value)}
-							placeholder='What game of thrones character are you?'
-						/>
+					<div className='flex md:flex-row flex-col md:items-end gap-2'>
+						<div className='w-full'>
+							<p className='font-bold text-xs pb-1'>Your question</p>
+							<Input
+								value={input}
+								onChange={(e) => setInput(e.target.value)}
+								placeholder='What game of thrones character are you?'
+							/>
+						</div>
+						<div>
+							<p className='font-bold text-xs pb-1'># of questions</p>
+							<Input
+								value={numberOfQuestions}
+								onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
+								type='number'
+								placeholder='Number of questions'
+								className='md:w-28'
+							/>
+						</div>
+						<Button className='mt-2 md:mt-0'>Start</Button>
 					</div>
-					<div>
-						<p className='font-bold text-xs pb-1'># of questions</p>
-						<Input
-							value={numberOfQuestions}
-							onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
-							type='number'
-							placeholder='Number of questions'
-							className='md:w-28'
-						/>
-					</div>
-					<Button className='mt-2 md:mt-0'>Start</Button>
+					<button
+						type='button'
+						onClick={() => setShowAdvanced(!showAdvanced)}
+						className='text-xs text-purple-400 hover:text-purple-300 text-left w-fit'
+					>
+						{showAdvanced ? '▼ Hide' : '▶ Show'} Advanced Options (optional)
+					</button>
+					{showAdvanced && (
+						<div className='flex flex-col gap-3 p-4 border border-gray-700 rounded-lg bg-gray-900/50'>
+							<div>
+								<p className='font-bold text-xs pb-1'>Describe possible outcomes (optional)</p>
+								<p className='text-xs text-gray-400 pb-2'>
+									Describe each possible result in detail. E.g., for "Which friend am I?", describe each friend's personality.
+								</p>
+								<textarea
+									value={outcomeDescriptions}
+									onChange={(e) => setOutcomeDescriptions(e.target.value)}
+									placeholder="Sarah - The organized planner who always has a backup plan and color-coded calendar&#10;Mike - The spontaneous adventurer who suggests road trips at 2am&#10;Emma - The empathetic listener who remembers everyone's birthdays..."
+									className='w-full h-32 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-purple-500'
+								/>
+							</div>
+							<div>
+								<p className='font-bold text-xs pb-1'>Question style preferences (optional)</p>
+								<p className='text-xs text-gray-400 pb-2'>
+									Describe what kind of questions you want. E.g., "focus on social situations" or "ask about work habits".
+								</p>
+								<textarea
+									value={questionStyle}
+									onChange={(e) => setQuestionStyle(e.target.value)}
+									placeholder="Focus on how people handle stress, their communication style, and what they do for fun on weekends..."
+									className='w-full h-24 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-purple-500'
+								/>
+							</div>
+						</div>
+					)}
 					<hr className='md:hidden mt-10' />
 				</form>
 			</div>
