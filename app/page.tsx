@@ -41,6 +41,8 @@ export default function Home() {
 	const [outcomeDescriptions, setOutcomeDescriptions] = useState<string>('');
 	const [questionStyle, setQuestionStyle] = useState<string>('');
 	const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+	const [publishing, setPublishing] = useState<boolean>(false);
+	const [publishedUrl, setPublishedUrl] = useState<string>('');
 
 	useEffect(() => {
 		if (usingSample) {
@@ -50,7 +52,7 @@ export default function Home() {
 		}
 
 		LogRocket.init('lpw8gr/aipersonalityquiz');
-	}, []);
+	}, [usingSample]);
 
 	useEffect(() => {
 		if (!loading && result.length > 0) {
@@ -139,6 +141,36 @@ export default function Home() {
 		}
 	};
 
+	const handlePublish = async () => {
+		if (publishing || questions.length === 0) return;
+
+		try {
+			setPublishing(true);
+			const title = usingSample ? sample : input;
+			const response = await fetch('/api/quiz/publish', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					title,
+					questions,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to publish');
+			}
+
+			const data = await response.json();
+			const url = `${window.location.origin}/quiz/${data.id}`;
+			setPublishedUrl(url);
+		} catch (e) {
+			console.error('Error publishing quiz:', e);
+			alert('Failed to publish quiz. Please try again.');
+		} finally {
+			setPublishing(false);
+		}
+	};
+
 	const handleOptionChange = (
 		selectedOption: Option,
 		questionIndex: number
@@ -222,7 +254,7 @@ export default function Home() {
 							<div>
 								<p className='font-bold text-xs pb-1'>Describe possible outcomes (optional)</p>
 								<p className='text-xs text-gray-400 pb-2'>
-									Describe each possible result in detail. E.g., for "Which friend am I?", describe each friend's personality.
+									Describe each possible result in detail. E.g., for &quot;Which friend am I?&quot;, describe each friend&apos;s personality.
 								</p>
 								<textarea
 									value={outcomeDescriptions}
@@ -234,7 +266,7 @@ export default function Home() {
 							<div>
 								<p className='font-bold text-xs pb-1'>Question style preferences (optional)</p>
 								<p className='text-xs text-gray-400 pb-2'>
-									Describe what kind of questions you want. E.g., "focus on social situations" or "ask about work habits".
+									Describe what kind of questions you want. E.g., &quot;focus on social situations&quot; or &quot;ask about work habits&quot;.
 								</p>
 								<textarea
 									value={questionStyle}
@@ -332,7 +364,41 @@ export default function Home() {
 							</p>
 						)}
 
-						<Button type='submit'>Submit</Button>
+						<div className='flex gap-2 flex-wrap'>
+							<Button type='submit'>Submit</Button>
+							<Button
+								type='button'
+								variant='outline'
+								onClick={handlePublish}
+								disabled={publishing}
+							>
+								{publishing ? 'Publishing...' : 'Publish & Share'}
+							</Button>
+						</div>
+
+						{publishedUrl && (
+							<div className='p-4 bg-green-900/30 border border-green-500 rounded-lg'>
+								<p className='text-sm font-bold text-green-400 mb-2'>Quiz published!</p>
+								<div className='flex gap-2 items-center'>
+									<input
+										type='text'
+										readOnly
+										value={publishedUrl}
+										className='flex-1 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md'
+									/>
+									<Button
+										type='button'
+										size='sm'
+										onClick={() => {
+											navigator.clipboard.writeText(publishedUrl);
+											alert('Link copied!');
+										}}
+									>
+										Copy
+									</Button>
+								</div>
+							</div>
+						)}
 					</form>
 				</>
 			)}
