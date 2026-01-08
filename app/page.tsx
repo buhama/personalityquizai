@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getRandomQuestion } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
 import LogRocket from 'logrocket';
+import { toast } from 'sonner';
 
 export interface Question {
 	question: string;
@@ -166,7 +167,7 @@ export default function Home() {
 			setPublishedUrl(url);
 		} catch (e) {
 			console.error('Error publishing quiz:', e);
-			alert('Failed to publish quiz. Please try again.');
+			toast.error('Failed to publish quiz. Please try again.');
 		} finally {
 			setPublishing(false);
 		}
@@ -341,7 +342,7 @@ export default function Home() {
 											size='sm'
 											onClick={() => {
 												navigator.clipboard.writeText(publishedUrl);
-												alert('Link copied!');
+												toast.success('Link copied!');
 											}}
 										>
 											Copy

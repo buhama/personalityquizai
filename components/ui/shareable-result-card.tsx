@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
+import { toast } from 'sonner';
 import { Button } from './button';
 
 interface ShareableResultCardProps {
@@ -32,7 +33,7 @@ export function ShareableResultCard({ title, result }: ShareableResultCardProps)
 						await navigator.clipboard.write([
 							new ClipboardItem({ 'image/png': blob })
 						]);
-						alert('Image copied to clipboard!');
+						toast.success('Image copied to clipboard!');
 					} catch {
 						const url = canvas.toDataURL('image/png');
 						const link = document.createElement('a');
