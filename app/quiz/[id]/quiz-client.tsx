@@ -88,6 +88,30 @@ export default function QuizClient({ title, questions }: QuizClientProps) {
 		}
 	};
 
+	const handleRetake = () => {
+		setFinalResult('');
+		setSelectedOptions(new Array(questions.length).fill(null));
+		const resetResults = results.map((r) => ({ ...r, points: 0 }));
+		setResults(resetResults);
+	};
+
+	if (finalResult) {
+		return (
+			<main className='flex min-h-screen flex-col items-center justify-center gap-6 py-20 px-10'>
+				<ShareableResultCard title={title} result={finalResult} />
+				<div className='flex gap-2'>
+					<Button onClick={handleRetake}>Retake Quiz</Button>
+					<Button
+						variant='outline'
+						onClick={() => window.location.href = '/'}
+					>
+						Create your own quiz
+					</Button>
+				</div>
+			</main>
+		);
+	}
+
 	return (
 		<main className='flex min-h-screen flex-col gap-10 py-20 px-10 md:py-24 md:px-24 md:max-w-4xl mx-auto'>
 			<div>
@@ -129,20 +153,7 @@ export default function QuizClient({ title, questions }: QuizClientProps) {
 						</div>
 					))}
 
-					<div className='flex gap-2'>
-						<Button type='submit'>Submit</Button>
-						<Button
-							type='button'
-							variant='outline'
-							onClick={() => window.location.href = '/'}
-						>
-							Create your own quiz
-						</Button>
-					</div>
-
-					{finalResult && (
-						<ShareableResultCard title={title} result={finalResult} />
-					)}
+					<Button type='submit'>Submit</Button>
 				</form>
 			)}
 		</main>

@@ -212,6 +212,13 @@ export default function Home() {
 		});
 	};
 
+	const handleRetake = () => {
+		setFinalResult('');
+		setSelectedOptions(new Array(questions.length).fill(null));
+		const resetResults = results.map((r) => ({ ...r, points: 0 }));
+		setResults(resetResults);
+	};
+
 	return (
 		<main className='flex min-h-screen flex-col gap-10 py-20 px-10 md:py-24 md:px-24 md:max-w-4xl mx-auto'>
 			<div>
@@ -307,97 +314,107 @@ export default function Home() {
 			)}
 			{questions?.length > 0 && !loading && (
 				<>
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							if (results.length > 0) {
-								const maxPoints = Math.max(...results.map((r) => r.points));
-								const topResult = results.find((r) => r.points === maxPoints);
-								setFinalResult(topResult?.result || 'No results');
-							} else {
-								setFinalResult('No results');
-							}
-						}}
-						className='space-y-4'
-					>
-						{questions.map((question: Question, questionIndex: number) => {
-							return (
-								<div key={question.question}>
-									<p className='font-bold'>{question.question}</p>
-									<RadioGroup
-										onValueChange={(newValue) => {
-											const selectedOption = question.options.find(
-												(o) => o.option === newValue
-											) as Option;
-											handleOptionChange(selectedOption, questionIndex);
-										}}
-										required
-									>
-										<div className='flex flex-col' key={questionIndex}>
-											{question.options &&
-												question.options.map(
-													(option: Option, index: number) => {
-														return (
-															<div
-																className='flex space-x-2 items-center'
-																key={index}
-															>
-																<RadioGroupItem
-																	value={option.option}
-																	id={option.option}
-																/>
-																<label htmlFor={option.option}>
-																	{option.option}
-																</label>
-															</div>
-														);
-													}
-												)}
-										</div>
-									</RadioGroup>
-								</div>
-							);
-						})}
-						<div className='flex gap-2 flex-wrap'>
-							<Button type='submit'>Submit</Button>
-							<Button
-								type='button'
-								variant='outline'
-								onClick={handlePublish}
-								disabled={publishing}
-							>
-								{publishing ? 'Publishing...' : 'Publish & Share'}
-							</Button>
-						</div>
-
-						{finalResult && (
+					{finalResult ? (
+						<div className='flex flex-col items-center gap-6'>
 							<ShareableResultCard title={usingSample ? sample : input} result={finalResult} />
-						)}
-
-						{publishedUrl && (
-							<div className='p-4 bg-green-900/30 border border-green-500 rounded-lg'>
-								<p className='text-sm font-bold text-green-400 mb-2'>Quiz published!</p>
-								<div className='flex gap-2 items-center'>
-									<input
-										type='text'
-										readOnly
-										value={publishedUrl}
-										className='flex-1 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md'
-									/>
-									<Button
-										type='button'
-										size='sm'
-										onClick={() => {
-											navigator.clipboard.writeText(publishedUrl);
-											alert('Link copied!');
-										}}
-									>
-										Copy
-									</Button>
-								</div>
+							<div className='flex gap-2 flex-wrap'>
+								<Button onClick={handleRetake}>Retake Quiz</Button>
+								<Button
+									variant='outline'
+									onClick={handlePublish}
+									disabled={publishing}
+								>
+									{publishing ? 'Publishing...' : 'Publish & Share'}
+								</Button>
 							</div>
-						)}
-					</form>
+							{publishedUrl && (
+								<div className='p-4 bg-green-900/30 border border-green-500 rounded-lg w-full max-w-md'>
+									<p className='text-sm font-bold text-green-400 mb-2'>Quiz published!</p>
+									<div className='flex gap-2 items-center'>
+										<input
+											type='text'
+											readOnly
+											value={publishedUrl}
+											className='flex-1 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md'
+										/>
+										<Button
+											size='sm'
+											onClick={() => {
+												navigator.clipboard.writeText(publishedUrl);
+												alert('Link copied!');
+											}}
+										>
+											Copy
+										</Button>
+									</div>
+								</div>
+							)}
+						</div>
+					) : (
+						<form
+							onSubmit={(e) => {
+								e.preventDefault();
+								if (results.length > 0) {
+									const maxPoints = Math.max(...results.map((r) => r.points));
+									const topResult = results.find((r) => r.points === maxPoints);
+									setFinalResult(topResult?.result || 'No results');
+								} else {
+									setFinalResult('No results');
+								}
+							}}
+							className='space-y-4'
+						>
+							{questions.map((question: Question, questionIndex: number) => {
+								return (
+									<div key={question.question}>
+										<p className='font-bold'>{question.question}</p>
+										<RadioGroup
+											onValueChange={(newValue) => {
+												const selectedOption = question.options.find(
+													(o) => o.option === newValue
+												) as Option;
+												handleOptionChange(selectedOption, questionIndex);
+											}}
+											required
+										>
+											<div className='flex flex-col' key={questionIndex}>
+												{question.options &&
+													question.options.map(
+														(option: Option, index: number) => {
+															return (
+																<div
+																	className='flex space-x-2 items-center'
+																	key={index}
+																>
+																	<RadioGroupItem
+																		value={option.option}
+																		id={option.option}
+																	/>
+																	<label htmlFor={option.option}>
+																		{option.option}
+																	</label>
+																</div>
+															);
+														}
+													)}
+											</div>
+										</RadioGroup>
+									</div>
+								);
+							})}
+							<div className='flex gap-2 flex-wrap'>
+								<Button type='submit'>Submit</Button>
+								<Button
+									type='button'
+									variant='outline'
+									onClick={handlePublish}
+									disabled={publishing}
+								>
+									{publishing ? 'Publishing...' : 'Publish & Share'}
+								</Button>
+							</div>
+						</form>
+					)}
 				</>
 			)}
 		</main>
