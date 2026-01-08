@@ -97,15 +97,17 @@ export default function QuizClient({ title, questions }: QuizClientProps) {
 
 	if (finalResult) {
 		return (
-			<main className='flex min-h-screen flex-col items-center justify-center gap-6 py-20 px-10'>
+			<main className='flex min-h-screen flex-col items-center justify-center py-12 px-6'>
+				<h1 className='text-xl font-medium text-gray-400 mb-6'>{title}</h1>
+
 				<ShareableResultCard title={title} result={finalResult} />
-				<div className='flex gap-2'>
-					<Button onClick={handleRetake}>Retake Quiz</Button>
-					<Button
-						variant='outline'
-						onClick={() => window.location.href = '/'}
-					>
-						Create your own quiz
+
+				<div className='flex gap-3 mt-10'>
+					<Button onClick={handleRetake} variant='outline' size='sm'>
+						Retake
+					</Button>
+					<Button onClick={() => (window.location.href = '/')} size='sm'>
+						Make your own
 					</Button>
 				</div>
 			</main>

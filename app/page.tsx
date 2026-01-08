@@ -316,38 +316,38 @@ export default function Home() {
 			{questions?.length > 0 && !loading && (
 				<>
 					{finalResult ? (
-						<div className='flex flex-col items-center gap-6'>
+						<div className='flex flex-col items-center'>
 							<ShareableResultCard title={usingSample ? sample : input} result={finalResult} />
-							<div className='flex gap-2 flex-wrap'>
-								<Button onClick={handleRetake}>Retake Quiz</Button>
+
+							<div className='flex gap-3 mt-6'>
+								<Button onClick={handleRetake} variant='outline' size='sm'>Retake</Button>
 								<Button
-									variant='outline'
 									onClick={handlePublish}
 									disabled={publishing}
+									size='sm'
 								>
-									{publishing ? 'Publishing...' : 'Publish & Share'}
+									{publishing ? 'Publishing...' : 'Publish'}
 								</Button>
 							</div>
+
 							{publishedUrl && (
-								<div className='p-4 bg-green-900/30 border border-green-500 rounded-lg w-full max-w-md'>
-									<p className='text-sm font-bold text-green-400 mb-2'>Quiz published!</p>
-									<div className='flex gap-2 items-center'>
-										<input
-											type='text'
-											readOnly
-											value={publishedUrl}
-											className='flex-1 px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md'
-										/>
-										<Button
-											size='sm'
-											onClick={() => {
-												navigator.clipboard.writeText(publishedUrl);
-												toast.success('Link copied!');
-											}}
-										>
-											Copy
-										</Button>
-									</div>
+								<div className='flex gap-2 items-center mt-4'>
+									<input
+										type='text'
+										readOnly
+										value={publishedUrl}
+										className='px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md w-64'
+									/>
+									<Button
+										size='sm'
+										variant='outline'
+										onClick={() => {
+											navigator.clipboard.writeText(publishedUrl);
+											toast.success('Link copied!');
+										}}
+									>
+										Copy
+									</Button>
 								</div>
 							)}
 						</div>

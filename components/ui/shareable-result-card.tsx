@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { toast } from 'sonner';
-import { Button } from './button';
+import { Copy, Loader2 } from 'lucide-react';
 
 interface ShareableResultCardProps {
 	title: string;
@@ -33,7 +33,7 @@ export function ShareableResultCard({ title, result }: ShareableResultCardProps)
 						await navigator.clipboard.write([
 							new ClipboardItem({ 'image/png': blob })
 						]);
-						toast.success('Image copied to clipboard!');
+						toast.success('Copied!');
 					} catch {
 						const url = canvas.toDataURL('image/png');
 						const link = document.createElement('a');
@@ -51,29 +51,36 @@ export function ShareableResultCard({ title, result }: ShareableResultCardProps)
 	};
 
 	return (
-		<div className='flex flex-col items-center gap-4'>
+		<div className='relative'>
 			<div
 				ref={cardRef}
 				className='w-[320px] min-h-[320px] sm:w-[400px] sm:min-h-[400px] bg-purple-900/30 rounded-2xl p-8 flex flex-col items-center justify-between border border-purple-500/30'
 			>
 				<div className='text-center'>
-					<p className='text-purple-300/70 text-sm uppercase tracking-widest'>I took the quiz</p>
-					<p className='text-white/90 text-lg font-medium mt-1'>{title}</p>
+					<p className='text-purple-300/60 text-sm'>{title}</p>
 				</div>
 
-				<div className='text-center flex-1 flex flex-col items-center justify-center py-4'>
-					<p className='text-purple-300/60 text-xs uppercase tracking-wider mb-2'>My result is</p>
-					<p className='text-white text-2xl sm:text-3xl font-bold text-center leading-tight'>{result}</p>
+				<div className='text-center flex-1 flex flex-col items-center justify-center'>
+					<p className='text-white text-3xl sm:text-4xl font-bold text-center leading-tight'>{result}</p>
 				</div>
 
 				<div className='text-center'>
-					<p className='text-purple-400/50 text-xs'>personalityquiz.ai</p>
+					<p className='text-purple-400/50 text-xs'>personalityquizai.vercel.app</p>
 				</div>
 			</div>
 
-			<Button onClick={handleCopy} disabled={copying} variant='outline' size='sm'>
-				{copying ? 'Copying...' : 'Copy Image'}
-			</Button>
+			<button
+				onClick={handleCopy}
+				disabled={copying}
+				className='absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-purple-300 bg-purple-900/80 border border-purple-500/30 hover:bg-purple-800/80 transition-colors disabled:opacity-50'
+			>
+				{copying ? (
+					<Loader2 className='h-3 w-3 animate-spin' />
+				) : (
+					<Copy className='h-3 w-3' />
+				)}
+				<span>{copying ? 'Copying' : 'Copy'}</span>
+			</button>
 		</div>
 	);
 }
