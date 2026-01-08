@@ -1,5 +1,5 @@
 import { ImageResponse } from '@vercel/og';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'edge';
 
@@ -9,8 +9,12 @@ export async function GET(
 ) {
 	const { id } = await params;
 
-	// Fetch quiz data
-	const supabase = await createClient();
+	// Create a simple Supabase client for edge runtime (no cookie handling needed for public quiz data)
+	const supabase = createClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+	);
+
 	const { data: quiz, error } = await supabase
 		.from('quizzes')
 		.select('title, questions_json')
