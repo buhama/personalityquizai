@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ShareableResultCard } from '@/components/ui/shareable-result-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getRandomQuestion } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
@@ -357,13 +358,6 @@ export default function Home() {
 								</div>
 							);
 						})}
-						{finalResult && (
-							<p className='text-lg font-bold'>
-								Your final result:{' '}
-								<span className='text-purple-400'> {finalResult}</span>
-							</p>
-						)}
-
 						<div className='flex gap-2 flex-wrap'>
 							<Button type='submit'>Submit</Button>
 							<Button
@@ -375,6 +369,10 @@ export default function Home() {
 								{publishing ? 'Publishing...' : 'Publish & Share'}
 							</Button>
 						</div>
+
+						{finalResult && (
+							<ShareableResultCard title={usingSample ? sample : input} result={finalResult} />
+						)}
 
 						{publishedUrl && (
 							<div className='p-4 bg-green-900/30 border border-green-500 rounded-lg'>
