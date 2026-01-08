@@ -414,6 +414,27 @@ export default function Home() {
 									{publishing ? 'Publishing...' : 'Publish & Share'}
 								</Button>
 							</div>
+							{publishedUrl && (
+								<div className='flex gap-2 items-center mt-4'>
+									<input
+										type='text'
+										readOnly
+										value={publishedUrl}
+										className='px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-md w-64'
+									/>
+									<Button
+										type='button'
+										size='sm'
+										variant='outline'
+										onClick={() => {
+											navigator.clipboard.writeText(publishedUrl);
+											toast.success('Link copied!');
+										}}
+									>
+										Copy
+									</Button>
+								</div>
+							)}
 						</form>
 					)}
 				</>
